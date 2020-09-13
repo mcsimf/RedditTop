@@ -1,7 +1,8 @@
-package com.mcsimf.reddittop
+package com.mcsimf.reddittop.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.mcsimf.reddittop.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
