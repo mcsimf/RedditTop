@@ -1,5 +1,6 @@
 package com.mcsimf.reddittop.core
 
+import android.net.Uri
 import java.util.concurrent.TimeUnit
 
 /**
@@ -31,4 +32,16 @@ fun Long.toTimeAgo(): String {
         hours > 0 -> "$hours ${HOUR_MARK}"
         else -> "${TimeUnit.MILLISECONDS.toMinutes(diffs)} ${MIN_MARK}"
     } + AGO_MARK
+}
+
+
+private val extensions = listOf("jpeg", "jpg", "png", "bmp", "webp")
+
+
+fun String?.isImage(): Boolean {
+    if(this.isNullOrEmpty()) return false
+    val uri = Uri.parse(this)
+    val file = uri.lastPathSegment
+    val ext = file?.substringAfterLast(".")
+    return ext in extensions
 }

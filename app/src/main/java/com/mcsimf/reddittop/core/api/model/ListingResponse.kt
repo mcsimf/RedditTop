@@ -25,5 +25,6 @@ data class Entry(
     val created_utc: Long,
     val thumbnail: String,
     val num_comments: Long,
-    val url: String
+    val url: String,
+    val url_overridden_by_dest: String
 )

@@ -26,7 +26,7 @@
         android:adjustViewBounds="true"
         android:paddingTop="@dimen/single_space"
         android:paddingBottom="@dimen/single_space"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -49,5 +49,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_thumb" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical05"
+        app:layout_constraintGuide_percent="0.5"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageButton
+        android:id="@+id/btn_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/ic_baseline_cloud_download_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/vertical05"
+        app:layout_constraintStart_toStartOf="@+id/vertical05" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,15 @@
 package com.mcsimf.reddittop.app
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
@@ -21,16 +27,16 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-
-    private lateinit var viewModel: MainViewModel
-
     private lateinit var adapter: TopListAdapter
 
+    val viewModel: MainViewModel by viewModels()
+
+    /**
+     *
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         adapter = TopListAdapter()
 
@@ -61,6 +67,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /**
+     *
+     */
     private fun reflectNetworkState(state: CombinedLoadStates) {
         when (state.refresh) {
             is LoadState.Loading -> {
@@ -76,17 +85,12 @@ class MainActivity : AppCompatActivity() {
                 refresh.isRefreshing = false
             }
         }
-
-//        when (state.append) {
-//            is LoadState.Error -> {
-//                val error = state.append as? LoadState.Error
-//                val message = error?.error?.message
-//                if (!message.isNullOrBlank()) issueSnackBar(message)
-//            }
-//        }
-
     }
 
+
+    /**
+     *
+     */
     private fun issueSnackBar(message: String) {
         Snackbar.make(recycler_view, message, Snackbar.LENGTH_INDEFINITE)
             .setAction(R.string.retry) {
@@ -94,10 +98,17 @@ class MainActivity : AppCompatActivity() {
             }.show()
     }
 
+
     /* Net state adapter */
 
+    /**
+     *
+     */
     private class StateViewHolder(val item: ItemNetState) : RecyclerView.ViewHolder(item)
 
+    /**
+     *
+     */
     private class ListLoadStateAdapter(val adapter: TopListAdapter) :
         LoadStateAdapter<StateViewHolder>() {
 
@@ -117,10 +128,15 @@ class MainActivity : AppCompatActivity() {
 
     /* Reddit list adapter */
 
+    /**
+     *
+     */
     private class ViewHolder(val itemReddit: ItemReddit) : RecyclerView.ViewHolder(itemReddit)
 
-
-    private class TopListAdapter : PagingDataAdapter<TypedEntry, ViewHolder>(
+    /**
+     *
+     */
+    private inner class TopListAdapter : PagingDataAdapter<TypedEntry, ViewHolder>(
         object : DiffUtil.ItemCallback<TypedEntry>() {
             override fun areItemsTheSame(oldItem: TypedEntry, newItem: TypedEntry): Boolean =
                 oldItem.data.name == newItem.data.name
@@ -135,9 +151,63 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            return ViewHolder(ItemReddit.create(parent.context))
+            return ViewHolder(ItemReddit.create(parent.context,
+                { toOpen ->
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(toOpen)
+                    startActivity(i)
+                }, { toLoad ->
+                    if (hasPermissions(parent.context)) {
+                        viewModel.downloads(toLoad)
+                    } else {
+                        urlToLoad = toLoad
+                        requestPermissions(PERMISSIONS_REQUIRED, PERMISSION_CODE)
+                    }
+                })
+            )
         }
-
     }
 
+
+    /**
+     *
+     */
+    private var urlToLoad: String? = null
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSION_CODE -> {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    val url = urlToLoad
+                    if (null != url) viewModel.downloads(url)
+                }
+            }
+        }
+    }
+
+
+    /**
+     *
+     */
+    private fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    companion object {
+
+        private const val PERMISSION_CODE = 13
+
+        /**
+         *
+         */
+        private val PERMISSIONS_REQUIRED = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    }
 }
