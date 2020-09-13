@@ -1,0 +1,11 @@
+<resources>
+
+    <dimen name="quarter_space">2dp</dimen>
+    <dimen name="half_space">4dp</dimen>
+    <dimen name="single_space">8dp</dimen>
+    <dimen name="double_space">16dp</dimen>
+    <dimen name="triple_space">24dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="tab_height">35dp</dimen>
+
+</resources>
