@@ -8,10 +8,14 @@ import java.io.File
 
 
 /**
+ *
  * @author Maksym Fedyay on 9/13/20 (mcsimf@gmail.com).
  */
 object Downloader {
 
+    /**
+     *
+     */
     fun download(context: Context, url: String) {
         val downloadUri: Uri = Uri.parse(url)
         val filename = downloadUri.lastPathSegment

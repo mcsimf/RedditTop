@@ -1,7 +1,6 @@
 package com.mcsimf.reddittop.app
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -152,25 +151,32 @@ class MainActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(ItemReddit.create(parent.context,
-                { toOpen ->
-                    val i = Intent(Intent.ACTION_VIEW)
-                    i.data = Uri.parse(toOpen)
-                    startActivity(i)
-                }, { toLoad ->
-                    if (hasPermissions(parent.context)) {
-                        viewModel.downloads(toLoad)
-                    } else {
-                        urlToLoad = toLoad
-                        requestPermissions(PERMISSIONS_REQUIRED, PERMISSION_CODE)
-                    }
-                })
+                { toOpen -> openUrl(toOpen) }, { toLoad -> download(toLoad) })
             )
         }
+
+
+        private fun openUrl(url: String) {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(url)
+            startActivity(i)
+        }
+
+
+        private fun download(url: String) {
+            if (hasPermissions()) {
+                viewModel.downloads(url)
+            } else {
+                urlToLoad = url
+                requestPermissions(PERMISSIONS_REQUIRED, PERMISSION_CODE)
+            }
+        }
+
     }
 
 
     /**
-     *
+     * Hold file url to be downloaded in case if permissions need to be granted.
      */
     private var urlToLoad: String? = null
 
@@ -192,10 +198,10 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     *
+     * Checks if permissions granted.
      */
-    private fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
-        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    private fun hasPermissions() = PERMISSIONS_REQUIRED.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
     }
 
 
@@ -204,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         private const val PERMISSION_CODE = 13
 
         /**
-         *
+         * Array of required permissions
          */
         private val PERMISSIONS_REQUIRED = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE

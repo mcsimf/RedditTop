@@ -3,7 +3,6 @@ package com.mcsimf.reddittop.app
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.mcsimf.reddittop.core.Downloader

@@ -1,6 +1,5 @@
 package com.mcsimf.reddittop.core
 
-import android.util.Log
 import androidx.paging.PagingSource
 import com.mcsimf.reddittop.core.api.Api
 import com.mcsimf.reddittop.core.api.model.TypedEntry
@@ -8,6 +7,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 /**
+ * Paging source of the Reddit top list.
  * @author Maksym Fedyay on 9/13/20 (mcsimf@gmail.com).
  */
 class ListingTopPagedSource : PagingSource<String, TypedEntry>() {
